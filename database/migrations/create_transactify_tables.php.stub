@@ -1,0 +1,49 @@
+<?php
+
+use Coolsam\Transactify\Enums\TransactionStatus;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create(Config::get('transactify.tables.payment-integrations','payment_integrations'), function (Blueprint $table) {
+            $table->id();
+            $table->nullableMorphs('payable');
+            $table->string('name');
+            $table->string('gateway_class');
+            $table->string('label')->nullable();
+            $table->string('description')->nullable();
+            $table->jsonb('config')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+
+        Schema::create(Config::get('transactify.tables.payment-transactions','payment_transactions'), function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('payment_integration_id')->constrained(Config::get('transactify.tables.payment-integrations','payment_integrations'),'id')->restrictOnDelete();
+            $table->nullableMorphs('payable');
+            $table->string('reference')->nullable();
+            $table->string('request_code')->nullable();
+            $table->string('confirmation_code')->nullable();
+            $table->string('status')->default(TransactionStatus::INITIATED->value);
+            $table->double('request_amount');
+            $table->string('request_currency');
+            $table->double('paid_amount');
+            $table->string('payment_currency');
+            $table->json('request_payload')->nullable();
+            $table->json('response_payload')->nullable();
+            $table->unique(['payment_integration_id','request_code']);
+            $table->unique(['payment_integration_id', 'confirmation_code']);
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(Config::get('transactify.tables.payment-transactions','payment_transactions'));
+        Schema::dropIfExists(Config::get('transactify.tables.payment-integrations','payment_integrations'));
+    }
+};

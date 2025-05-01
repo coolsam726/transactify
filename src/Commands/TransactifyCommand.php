@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Coolsam\Transactify\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class TransactifyCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'transactify';
 
     public $description = 'My command';
 
