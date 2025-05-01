@@ -12,6 +12,7 @@ class Transactify
     {
         return $this->loadGateways();
     }
+
     protected function setGateways(array $gateways): static
     {
         $this->gateways = $gateways;
@@ -22,6 +23,7 @@ class Transactify
     public function appendGateways(array $gateways): static
     {
         $this->gateways = array_merge($this->gateways, $gateways);
+
         return $this;
     }
 
@@ -33,6 +35,7 @@ class Transactify
             $custom2 = $this->getCustomGateways();
 
             $gateways = array_merge($default, $custom1, $custom2);
+
             return $this->setGateways($gateways);
         } catch (\Throwable $exception) {
             return $this->setGateways([]);

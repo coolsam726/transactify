@@ -17,6 +17,7 @@ class Paypal extends PaymentGateway
     {
         return redirect('https://paypal.com');
     }
+
     public function getLogo(): string
     {
         return 'https://www.paypalobjects.com/marketing/web/logos/paypal-mark-color.svg';
@@ -26,5 +27,4 @@ class Paypal extends PaymentGateway
     {
         return $this->getLogo();
     }
-
 }

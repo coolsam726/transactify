@@ -57,14 +57,15 @@ class TransactifyServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->app->singleton(Transactify::class, function ($app) {
-            $instance = new Transactify();
+            $instance = new Transactify;
+
             return $instance->init();
         });
 
         $this->app->alias(Transactify::class, 'transactify');
 
         $this->app->singleton('transactify.utils', function ($app) {
-            return new Utils();
+            return new Utils;
         });
         $this->app->alias(Utils::class, 'transactify.utils');
     }
