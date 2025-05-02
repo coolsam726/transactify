@@ -114,6 +114,7 @@ class Transactify
                 return in_array($gateway->getName(), $only);
             });
         }
+
         return $gateways->toArray();
     }
 

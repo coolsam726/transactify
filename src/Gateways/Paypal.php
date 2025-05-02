@@ -14,7 +14,6 @@ use PaypalServerSdkLib\Models\Builders\AmountBreakdownBuilder;
 use PaypalServerSdkLib\Models\Builders\AmountWithBreakdownBuilder;
 use PaypalServerSdkLib\Models\Builders\OrderRequestBuilder;
 use PaypalServerSdkLib\Models\Builders\PurchaseUnitRequestBuilder;
-use PaypalServerSdkLib\Models\Builders\ShippingDetailsBuilder;
 use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
 use PaypalServerSdkLib\Models\Money;
 use PaypalServerSdkLib\PaypalServerSdkClientBuilder;
@@ -57,6 +56,7 @@ class Paypal extends PaymentGateway
             );
 
         $client->environment(strtolower($mode) === 'live' ? Environment::PRODUCTION : Environment::SANDBOX);
+
         return $client;
     }
 
@@ -69,7 +69,7 @@ class Paypal extends PaymentGateway
         $amount = $dataCollect->get('amount');
         $narration = $dataCollect->get('narration');
         $reference = $transaction->reference ?? str(Str::ulid())->upper()->toString();
-        $intent = strtolower($dataCollect->get('intent','')) === 'authorize' ? CheckoutPaymentIntent::AUTHORIZE : CheckoutPaymentIntent::CAPTURE;
+        $intent = strtolower($dataCollect->get('intent', '')) === 'authorize' ? CheckoutPaymentIntent::AUTHORIZE : CheckoutPaymentIntent::CAPTURE;
         $breakdown = AmountBreakdownBuilder::init();
         if ($dataCollect
             ->get('discount')) {
@@ -118,16 +118,13 @@ class Paypal extends PaymentGateway
                         ->description(str($narration)->limit(127))
                         ->customId($transaction->reference)
                         ->invoiceId($dataCollect->get('invoice_id'))
-                        ->build()
+                        ->build(),
                 ]
             )
                 ->build(),
-            'prefer' => 'return=minimal'
+            'prefer' => 'return=minimal',
         ];
     }
 
-    private function makePaymentPayload(PaymentTransaction $transaction, array $data): array
-    {
-
-    }
+    private function makePaymentPayload(PaymentTransaction $transaction, array $data): array {}
 }

@@ -14,7 +14,7 @@ class PaymentTransaction extends Model
 
     public function getTable()
     {
-        return Config::get('transactify.tables.payment-transactions','payment_transactions');
+        return Config::get('transactify.tables.payment-transactions', 'payment_transactions');
     }
 
     public function payable(): MorphTo
@@ -29,6 +29,6 @@ class PaymentTransaction extends Model
 
     public function transactionHistories(): HasMany
     {
-        return $this->hasMany(Config::get('transactify.models.transaction-history',TransactionHistory::class), 'transaction_id', 'id');
+        return $this->hasMany(Config::get('transactify.models.transaction-history', TransactionHistory::class), 'transaction_id', 'id');
     }
 }

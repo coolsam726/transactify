@@ -29,7 +29,7 @@ class Utils
     {
         $contents = file_get_contents($filePath);
         if (preg_match('/namespace\s+(.+?);.*class\s+(\w+)/s', $contents, $matches)) {
-            return $matches[1] . '\\' . $matches[2];
+            return $matches[1].'\\'.$matches[2];
         }
 
         return null;
@@ -41,8 +41,10 @@ class Utils
         $integration = $integrationModel::find($paymentIntegrationId);
         if ($integration) {
             $class = $integration->getAttribute('gateway_class');
-            return new $class();
+
+            return new $class;
         }
+
         return null;
     }
 
@@ -57,13 +59,13 @@ class Utils
             }
             // check if it is a url
             if (str($logo)->startsWith('http')) {
-                return '<img src="' . $logo . '" alt="' . $gateway->getName() . '" class="h-10 rounded" />';
+                return '<img src="'.$logo.'" alt="'.$gateway->getName().'" class="h-10 rounded" />';
             } elseif (str($logo)->startsWith('<')) {
                 return "<div class='h-10'> $logo </div>";
             } else {
                 // check if it is a file
                 if (file_exists($logo)) {
-                    return '<img src="' . asset($logo) . '" alt="' . $gateway->getName() . '" class="h-10 rounded" />';
+                    return '<img src="'.asset($logo).'" alt="'.$gateway->getName().'" class="h-10 rounded" />';
                 } else {
                     return '';
                 }
@@ -76,6 +78,7 @@ class Utils
     public function getGatewayOptions(): Collection
     {
         $gateways = app(Transactify::class)->getGateways();
+
         return collect($gateways)->mapWithKeys(function (PaymentGateway $gateway) {
             return [$gateway->getName() => $gateway->getDisplayName()];
         });

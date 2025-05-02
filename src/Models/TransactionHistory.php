@@ -11,12 +11,14 @@ class TransactionHistory extends Model
     protected $guarded = [
         'id',
     ];
+
     protected $casts = [
         'response' => 'array',
     ];
+
     public function getTable()
     {
-        return Config::get('transactify.tables.transaction-histories','transaction_histories');
+        return Config::get('transactify.tables.transaction-histories', 'transaction_histories');
     }
 
     public function actor(): BelongsTo
