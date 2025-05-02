@@ -24,7 +24,10 @@ class TransactifyServiceProvider extends PackageServiceProvider
             ->name('transactify')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_transactify_tables')
+            ->hasMigrations(
+                'create_transactify_tables',
+                'create_transaction_histories_table'
+            )
             ->hasInstallCommand(function (InstallCommand $install) {
                 $install
                     ->startWith(function (Command $command) {

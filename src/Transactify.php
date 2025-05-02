@@ -106,9 +106,15 @@ class Transactify
         return $customGateways;
     }
 
-    public function getGateways(): array
+    public function getGateways(array $only = []): array
     {
-        return $this->gateways;
+        $gateways = collect($this->gateways);
+        if (! empty($only)) {
+            $gateways = $gateways->filter(function ($gateway) use ($only) {
+                return in_array($gateway->getName(), $only);
+            });
+        }
+        return $gateways->toArray();
     }
 
     /**

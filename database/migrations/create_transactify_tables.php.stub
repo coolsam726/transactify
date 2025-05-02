@@ -3,6 +3,7 @@
 use Coolsam\Transactify\Enums\TransactionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -23,7 +24,9 @@ return new class extends Migration
 
         Schema::create(Config::get('transactify.tables.payment-transactions','payment_transactions'), function (Blueprint $table) {
             $table->id();
-            $table->foreignId('payment_integration_id')->constrained(Config::get('transactify.tables.payment-integrations','payment_integrations'),'id')->restrictOnDelete();
+            $table->foreignId('payment_integration_id')
+                ->constrained(Config::get('transactify.tables.payment-integrations','payment_integrations'),'id')
+                ->restrictOnDelete();
             $table->nullableMorphs('payable');
             $table->string('reference')->nullable();
             $table->string('request_code')->nullable();
@@ -35,8 +38,8 @@ return new class extends Migration
             $table->string('payment_currency');
             $table->json('request_payload')->nullable();
             $table->json('response_payload')->nullable();
-            $table->unique(['payment_integration_id','request_code']);
-            $table->unique(['payment_integration_id', 'confirmation_code']);
+            $table->unique(['payment_integration_id','request_code'], 'uniq_payment_integration_request_code');
+            $table->unique(['payment_integration_id', 'confirmation_code'], 'uniq_payment_integration_confirm_code');
             $table->timestamps();
         });
     }

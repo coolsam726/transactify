@@ -4,11 +4,16 @@ namespace Coolsam\Transactify\Models;
 
 use Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class PaymentIntegration extends Model
 {
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'config' => 'array',
+    ];
 
     public function getTable()
     {
@@ -20,8 +25,13 @@ class PaymentIntegration extends Model
         return $this->morphTo('payable');
     }
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(Config::get('transactify.models.payment-transaction', 'Coolsam\Transactify\Models\PaymentTransaction'), 'payment_integration_id');
+    }
+
+    public function getGatewayAttribute()
+    {
+        return app($this->getAttribute('gateway_class'));
     }
 }

@@ -4,10 +4,12 @@ return [
     'tables' => [
         'payment-integrations' => 'payment_integrations',
         'payment-transactions' => 'payment_transactions',
+        'transaction-histories' => 'transaction_histories',
     ],
     'models' => [
         'payment-integration' => \Coolsam\Transactify\Models\PaymentIntegration::class,
         'payment-transaction' => \Coolsam\Transactify\Models\PaymentTransaction::class,
+        'transaction-history' => \Coolsam\Transactify\Models\TransactionHistory::class,
     ],
     'extend' => [
         /**
