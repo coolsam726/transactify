@@ -13,7 +13,7 @@ class TransactionHistory extends Model
     ];
 
     protected $casts = [
-        'response' => 'array',
+        'response_payload' => 'array',
     ];
 
     public function getTable()

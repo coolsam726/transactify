@@ -11,7 +11,7 @@ class Paystack extends PaymentGateway
         return 'paystack';
     }
 
-    public function initiatePayment(array $data): array
+    public function initiatePayment(array $data, int $integrationId): array
     {
         return $data;
     }

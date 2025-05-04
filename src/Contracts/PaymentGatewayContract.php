@@ -15,7 +15,7 @@ interface PaymentGatewayContract
 
     public function getDarkLogo(): string;
 
-    public function initiatePayment(array $data): RedirectResponse|Redirector|array;
+    public function initiatePayment(array $data, int $integrationId): RedirectResponse|Redirector|array;
 
     public function handleCallback(array $data): array;
 
@@ -24,4 +24,6 @@ interface PaymentGatewayContract
     public function getSupportedCurrencies(): array;
 
     public function getSupportedCountries(): array;
+
+    public function getDefaultCurrency(): string;
 }

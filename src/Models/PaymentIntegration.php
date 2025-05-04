@@ -6,6 +6,7 @@ use Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 
 class PaymentIntegration extends Model
 {
@@ -33,5 +34,15 @@ class PaymentIntegration extends Model
     public function getGatewayAttribute()
     {
         return app($this->getAttribute('gateway_class'));
+    }
+
+    public function getConfigsAttribute(): Collection
+    {
+        return collect($this->getAttribute('config') ?? []);
+    }
+
+    public function getConfig(string $key, mixed $default = null): mixed
+    {
+        return collect($this->getAttribute('config') ?? [])->get($key, $default);
     }
 }

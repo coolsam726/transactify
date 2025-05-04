@@ -11,7 +11,7 @@ class Mpesa extends PaymentGateway
         return 'mpesa';
     }
 
-    public function initiatePayment(array $data): array
+    public function initiatePayment(array $data, int $integrationId): array
     {
         return $data;
     }

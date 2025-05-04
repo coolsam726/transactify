@@ -2,12 +2,16 @@
 
 namespace Coolsam\Transactify\Support;
 
+use Coolsam\Transactify\Enums\TransactionStatus;
 use Coolsam\Transactify\Models\PaymentIntegration;
+use Coolsam\Transactify\Models\PaymentTransaction;
 use Coolsam\Transactify\PaymentGateway;
 use Coolsam\Transactify\Transactify;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use ReflectionClass;
 use ReflectionException;
+use Str;
 use Throwable;
 
 class Utils
@@ -82,5 +86,45 @@ class Utils
         return collect($gateways)->mapWithKeys(function (PaymentGateway $gateway) {
             return [$gateway->getName() => $gateway->getDisplayName()];
         });
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function createTransaction(
+        PaymentIntegration $integration,
+        float $amount,
+        string $narration = null,
+        string $currency = null,
+        string $reference = null,
+        string $invoiceId = null,
+        ?Model $payable = null
+    ): PaymentTransaction {
+        /**
+         * @var PaymentTransaction $transactionModel
+         */
+        $transactionModel = \Config::get('transactify.models.payment-transaction', PaymentTransaction::class);
+        $transaction = new $transactionModel();
+        /**
+         * @var PaymentGateway $gateway
+         */
+        $gateway = $integration->gateway;
+
+        $currency = $currency ?? $integration->getConfig('default_currency', $gateway->getDefaultCurrency());
+        $reference = $reference ?? str(Str::ulid())->upper()->toString();
+        $narration = $narration ?? 'Payment for order '.$reference;
+        $transaction->setAttribute('payment_integration_id', $integration->id);
+        $transaction->setAttribute('reference', $reference);
+        $transaction->setAttribute('narration', $narration);
+        $transaction->setAttribute('request_currency', $currency);
+        $transaction->setAttribute('request_amount', $amount);
+        $transaction->setAttribute('payable_type', $payable?->getMorphClass());
+        $transaction->setAttribute('payable_id', $payable?->getKey());
+        $transaction->setAttribute('status', TransactionStatus::PENDING->value);
+        $transaction->setAttribute('invoice_id', $invoiceId);
+        $transaction->setAttribute('paid_amount', 0);
+        $transaction->setAttribute('payment_currency', $currency);
+        $transaction->saveOrFail();
+        return $transaction;
     }
 }

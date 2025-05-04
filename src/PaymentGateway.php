@@ -25,7 +25,7 @@ abstract class PaymentGateway implements PaymentGatewayContract
         return 'https://ui-avatars.com/api/?name='.$this->getName().'&size=512&bold=true&format=svg&background=0a0a0a&&color=CCCCCC';
     }
 
-    abstract public function initiatePayment(array $data): RedirectResponse|Redirector|array;
+    abstract public function initiatePayment(array $data, int $integrationId): RedirectResponse|Redirector|array;
 
     public function handleCallback(array $data): array
     {
@@ -45,5 +45,10 @@ abstract class PaymentGateway implements PaymentGatewayContract
     public function getSupportedCountries(): array
     {
         return [];
+    }
+
+    public function getDefaultCurrency(): string
+    {
+        return 'USD';
     }
 }

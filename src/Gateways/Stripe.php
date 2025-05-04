@@ -11,7 +11,7 @@ class Stripe extends PaymentGateway
         return 'stripe';
     }
 
-    public function initiatePayment(array $data): array
+    public function initiatePayment(array $data, int $integrationId): array
     {
         return $data;
     }

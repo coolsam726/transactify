@@ -2,6 +2,7 @@
 
 namespace Coolsam\Transactify\Models;
 
+use Coolsam\Transactify\Concerns\HasTransactionHistory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 
 class PaymentTransaction extends Model
 {
+    use HasTransactionHistory;
     protected $guarded = ['id'];
 
     public function getTable()
