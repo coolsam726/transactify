@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Config;
 class PaymentTransaction extends Model
 {
     use HasTransactionHistory;
+
     protected $guarded = ['id'];
 
     public function getTable()

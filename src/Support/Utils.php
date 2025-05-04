@@ -94,17 +94,17 @@ class Utils
     public function createTransaction(
         PaymentIntegration $integration,
         float $amount,
-        string $narration = null,
-        string $currency = null,
-        string $reference = null,
-        string $invoiceId = null,
+        ?string $narration = null,
+        ?string $currency = null,
+        ?string $reference = null,
+        ?string $invoiceId = null,
         ?Model $payable = null
     ): PaymentTransaction {
         /**
          * @var PaymentTransaction $transactionModel
          */
         $transactionModel = \Config::get('transactify.models.payment-transaction', PaymentTransaction::class);
-        $transaction = new $transactionModel();
+        $transaction = new $transactionModel;
         /**
          * @var PaymentGateway $gateway
          */
@@ -125,6 +125,7 @@ class Utils
         $transaction->setAttribute('paid_amount', 0);
         $transaction->setAttribute('payment_currency', $currency);
         $transaction->saveOrFail();
+
         return $transaction;
     }
 }

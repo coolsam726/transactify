@@ -38,7 +38,7 @@ class Paypal extends PaymentGateway
     {
         $integration = config('transactify.models.payment-integration',
             PaymentIntegration::class)::find($integrationId);
-        if (!$integration) {
+        if (! $integration) {
             throw new \Exception('Integration not found');
         }
         $client = $this->makeClient($integration, $data);
@@ -64,7 +64,7 @@ class Paypal extends PaymentGateway
                     'request_payload' => $payload,
                     'request_code' => $res->getId(),
                 ]);
-                $transaction->transactionInitiated(collect($res)->toArray(), "Paypal Order initiated successfully. Order ID: ".collect($res)->get('id'));
+                $transaction->transactionInitiated(collect($res)->toArray(), 'Paypal Order initiated successfully. Order ID: '.collect($res)->get('id'));
                 $redirection = $this->getApprovalLink(collect($res));
 
                 if ($redirection) {
@@ -97,7 +97,7 @@ class Paypal extends PaymentGateway
 
     private function getApprovalLink(Collection $response): string
     {
-        Log::alert("FINDING APPROVAL LINK");
+        Log::alert('FINDING APPROVAL LINK');
         Log::info($response);
         /**
          * @var Collection<LinkDescription> $links
@@ -106,7 +106,8 @@ class Paypal extends PaymentGateway
         /**
          * @var LinkDescription $actionLink
          */
-        $actionLink = $links->firstWhere(fn(LinkDescription $link) => in_array($link->getRel(), ['approve', 'payer-action']));
+        $actionLink = $links->firstWhere(fn (LinkDescription $link) => in_array($link->getRel(), ['approve', 'payer-action']));
+
         return $actionLink->getHref();
     }
 
@@ -197,7 +198,5 @@ class Paypal extends PaymentGateway
         ];
     }
 
-    private function makePaymentPayload(PaymentTransaction $transaction, array $data): array
-    {
-    }
+    private function makePaymentPayload(PaymentTransaction $transaction, array $data): array {}
 }

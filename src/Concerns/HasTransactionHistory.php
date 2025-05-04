@@ -15,8 +15,9 @@ trait HasTransactionHistory
 {
     public function transactionHistories(): HasMany
     {
-        return $this->hasMany(config('transactify.models.transaction-history', TransactionHistory::class),'transaction_id');
+        return $this->hasMany(config('transactify.models.transaction-history', TransactionHistory::class), 'transaction_id');
     }
+
     public function recordHistory(TransactionStatus $status, ?array $response = [], ?string $message = null): TransactionHistory
     {
         /**
@@ -34,7 +35,7 @@ trait HasTransactionHistory
         // Update the transaction status
         $this->update([
             'status' => $status->value,
-            ...(filled($response) ? ['response_payload'=> $response] : []),
+            ...(filled($response) ? ['response_payload' => $response] : []),
         ]);
 
         return $res;
@@ -43,7 +44,7 @@ trait HasTransactionHistory
     public function updateTransactionFromHistory(): false|static
     {
         $latestHistory = $this->transactionHistories()->latest()->first();
-        if (!$latestHistory) {
+        if (! $latestHistory) {
             return false;
         }
 
@@ -53,41 +54,44 @@ trait HasTransactionHistory
 
         return $this;
     }
+
     public function updateLatestHistory(?string $message = null, ?array $response = []): TransactionHistory|false
     {
         /**
          * @var TransactionHistory $latestHistory
          */
         $latestHistory = $this->transactionHistories()->latest()->first();
-        if (!$latestHistory) {
+        if (! $latestHistory) {
             return false;
         }
         $status = TransactionStatus::from($latestHistory->transaction_status);
-        if (!$status->isFinal()) {
+        if (! $status->isFinal()) {
             $latestHistory->update([
                 'description' => $message ?? $latestHistory->description ?? $status->description(),
                 'response_payload' => $response,
                 'actor_id' => auth()->check() ? auth()->id() : $latestHistory->actor_id,
             ]);
         }
+
         return $latestHistory->refresh();
     }
+
     protected static function bootHasTransactionHistory(): void
     {
         static::creating(function (PaymentTransaction $transaction) {
-            if (!$transaction->status) {
+            if (! $transaction->status) {
                 $transaction->status = TransactionStatus::PENDING->value;
             }
         });
         static::created(function (PaymentTransaction $transaction) {
-            $transaction->recordHistory(TransactionStatus::PENDING, message: "The transaction has been created and is pending payment");
+            $transaction->recordHistory(TransactionStatus::PENDING, message: 'The transaction has been created and is pending payment');
         });
     }
 
     // Add events
     public function transactionInitiated(?array $response = [], ?string $message = null): void
     {
-        $this->recordHistory(TransactionStatus::INITIATED,response: $response, message: $message);
+        $this->recordHistory(TransactionStatus::INITIATED, response: $response, message: $message);
     }
 
     public function transactionSuccessful(array $response, ?string $message = null): void
@@ -104,7 +108,7 @@ trait HasTransactionHistory
 
     public function paymentFailed(array $response, ?string $message = null): void
     {
-        $this->recordHistory(TransactionStatus::FAILED, response: $response,message: $message);
+        $this->recordHistory(TransactionStatus::FAILED, response: $response, message: $message);
     }
 
     public function paymentCancelled(?array $response = [], ?string $message = null): void
